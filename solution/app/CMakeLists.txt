@@ -7,6 +7,9 @@ set(APP main)
 add_executable( ${APP} "src/dummy.cpp" )
 target_sources( ${APP} PRIVATE
   "src/main.cpp"
+  "src/work.cpp"
+  "src/error_printer.cpp"
+  "src/filesystem.cpp"
 )
 
 include_directories( "src" )
@@ -22,3 +25,5 @@ include_directories(
   "$<TARGET_PROPERTY:spdlog,MY_INCLUDE_DIRS>" )
 
 target_link_libraries( ${APP} ${Tsetlini_LIBRARY} stdc++fs )
+
+target_compile_definitions( ${APP} PRIVATE "$<TARGET_PROPERTY:fmt,INTERFACE_COMPILE_DEFINITIONS>" )
