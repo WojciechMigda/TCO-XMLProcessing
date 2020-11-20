@@ -10,6 +10,7 @@ target_sources( ${APP} PRIVATE
   "src/work.cpp"
   "src/error_printer.cpp"
   "src/filesystem.cpp"
+  "src/parser.cpp"
 )
 
 include_directories( "src" )

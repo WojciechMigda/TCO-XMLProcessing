@@ -1,5 +1,6 @@
 #include "filesystem.hpp"
 #include "error_printer.hpp"
+#include "parser.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -8,6 +9,9 @@
 
 int work(std::ifstream & ifile, std::string const & odir)
 {
+    parse_xml_file(ifile)
+        .leftMap(error_printer);
+
     return 0;
 }
 
