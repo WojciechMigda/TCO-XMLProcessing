@@ -11,6 +11,7 @@ target_sources( ${APP} PRIVATE
   "src/error_printer.cpp"
   "src/filesystem.cpp"
   "src/parser.cpp"
+  "src/jsonize.cpp"
 )
 
 include_directories( "src" )
