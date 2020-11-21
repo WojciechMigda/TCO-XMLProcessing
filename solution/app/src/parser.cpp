@@ -1,3 +1,4 @@
+#include "cli_params.hpp"
 #include "parser.hpp"
 
 #include "neither/either.hpp"
@@ -14,12 +15,12 @@ using namespace neither;
 using boost::property_tree::ptree;
 
 
-tags_tree_t collect_tag_stats(ptree && pt)
+tags_tree_t collect_tag_stats(ptree && pt, cli_params_t const & cli_params)
 {
     tags_tree_t tags;
-
     std::queue<std::pair<std::string, ptree>> nodes;
-    nodes.emplace("<root>", std::move(pt));
+
+    nodes.emplace(params::root_name(cli_params), std::move(pt));
 
     // BFS
     while (not nodes.empty())
@@ -69,11 +70,17 @@ tags_tree_t collect_tag_stats(ptree && pt)
         nodes.pop();
     }
 
+    if (params::skip_root(cli_params))
+    {
+        tags.erase(params::root_name(cli_params));
+    }
+
     return tags;
 }
 
 
-Either<std::string, tags_tree_t> parse_xml_file(std::ifstream & ifile)
+Either<std::string, tags_tree_t>
+parse_xml_file(std::ifstream & ifile, cli_params_t const & cli_params)
 {
     using rv_type = Either<std::string, tags_tree_t>;
 
@@ -88,5 +95,5 @@ Either<std::string, tags_tree_t> parse_xml_file(std::ifstream & ifile)
         return rv_type::leftOf(fmt::format("Bad XML: {}", ex.what()));
     }
 
-    return rv_type::rightOf(collect_tag_stats(std::move(pt)));
+    return rv_type::rightOf(collect_tag_stats(std::move(pt), cli_params));
 }

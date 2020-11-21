@@ -1,3 +1,4 @@
+#include "cli_params.hpp"
 #include "filesystem.hpp"
 #include "error_printer.hpp"
 #include "parser.hpp"
@@ -9,12 +10,15 @@
 #include <string>
 
 
-int work(std::ifstream & ifile, std::string const & odir)
+int work(
+    std::ifstream & ifile,
+    std::string const & odir,
+    cli_params_t const & cli_params)
 {
-    int rv = parse_xml_file(ifile)
+    int rv = parse_xml_file(ifile, cli_params)
         .rightFlatMap(jsonize)
         .rightFlatMap(
-            [&odir](auto && fnames_with_contents)
+            [&odir, &cli_params](auto && fnames_with_contents)
             {
                 return save_to_files(std::move(fnames_with_contents), odir);
             }
@@ -27,19 +31,22 @@ int work(std::ifstream & ifile, std::string const & odir)
 }
 
 
-int maybe_work(std::string const & ifname, std::string const & odir)
+int maybe_work(
+    std::string const & ifname,
+    std::string const & odir,
+    cli_params_t const & cli_params)
 {
     int rv = open_file_r(ifname)
         .leftMap(error_printer)
         .rightMap(
-            [&odir](std::ifstream && ifile)
+            [&odir, &cli_params](std::ifstream && ifile)
             {
                 int rv = check_directory_w(odir)
                     .leftMap(error_printer)
                     .rightMap(
-                        [&ifile](std::string const & odir)
+                        [&ifile, &cli_params](std::string const & odir)
                         {
-                            work(ifile, odir);
+                            work(ifile, odir, cli_params);
 
                             return 0;
                         }

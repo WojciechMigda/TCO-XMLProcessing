@@ -1,4 +1,5 @@
 #include "work.hpp"
+#include "cli_params.hpp"
 
 #include "spdlog/spdlog.h"
 #include "clipp.hpp"
@@ -62,7 +63,12 @@ int main(int argc, char **argv)
 
         spdlog::info("Start");
 
-        auto rv = maybe_work(xml_ifname, out_dir);
+        cli_params_t const cli_params{
+            {"skip_root", skip_root},
+            {"root_name", root_name}
+        };
+
+        auto rv = maybe_work(xml_ifname, out_dir, cli_params);
 
         spdlog::info("Done");
 
