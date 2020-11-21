@@ -12,6 +12,7 @@ target_sources( ${APP} PRIVATE
   "src/filesystem.cpp"
   "src/parser.cpp"
   "src/jsonize.cpp"
+  "src/file_io.cpp"
 )
 
 include_directories( "src" )

@@ -33,7 +33,7 @@ tags_tree_t collect_tag_stats(ptree && pt)
         // bump counter for the current tag
         ++tag_record.count;
 
-        fmt::print("{} [{}] - children size: {}\n", name, tag_record.count, subtree.size());
+//        fmt::print("{} [{}] - children size: {}\n", name, tag_record.count, subtree.size());
 
         for (auto & [child_name, child_subtree] : subtree)
         {
@@ -52,7 +52,7 @@ tags_tree_t collect_tag_stats(ptree && pt)
                     tag_record.attribute_counts[att_name] += 1;
                 }
 
-                fmt::print("    node {} has {} attrs\n", name, child_subtree.size());
+//                fmt::print("    node {} has {} attrs\n", name, child_subtree.size());
                 continue;
             }
 

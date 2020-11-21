@@ -1,6 +1,8 @@
 #include "filesystem.hpp"
 #include "error_printer.hpp"
 #include "parser.hpp"
+#include "jsonize.hpp"
+#include "file_io.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -9,10 +11,19 @@
 
 int work(std::ifstream & ifile, std::string const & odir)
 {
-    parse_xml_file(ifile)
-        .leftMap(error_printer);
+    int rv = parse_xml_file(ifile)
+        .rightFlatMap(jsonize)
+        .rightFlatMap(
+            [&odir](auto && fnames_with_contents)
+            {
+                return save_to_files(std::move(fnames_with_contents), odir);
+            }
+        )
+        .leftMap(error_printer)
+        .join()
+        ;
 
-    return 0;
+    return rv;
 }
 
 
