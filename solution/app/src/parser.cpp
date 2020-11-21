@@ -24,6 +24,8 @@ tags_tree_t collect_tag_stats(ptree && pt)
     // BFS
     while (not nodes.empty())
     {
+        std::set<std::string> unique_children;
+
         auto & [name, subtree] = nodes.front();
 
         auto & tag_record = tags[name];
@@ -37,12 +39,17 @@ tags_tree_t collect_tag_stats(ptree && pt)
         {
             if (child_name == "<xmlattr>")
             {
+                std::set<std::string> unique_atts;
+
                 // update known attributes and their counts
-                for (auto & kv : child_subtree)
+
+                for (auto const & kv : child_subtree)
                 {
-                    auto & att_name = kv.first;
-                    auto & att_count = tag_record.attribute_counts[att_name];
-                    ++att_count;
+                    unique_atts.insert(kv.first);
+                }
+                for (auto const & att_name : unique_atts)
+                {
+                    tag_record.attribute_counts[att_name] += 1;
                 }
 
                 fmt::print("    node {} has {} attrs\n", name, child_subtree.size());
@@ -50,9 +57,13 @@ tags_tree_t collect_tag_stats(ptree && pt)
             }
 
             // update known children and their counts
-            ++tag_record.children_counts[child_name];
+            unique_children.insert(child_name);
 
             nodes.emplace(child_name, child_subtree);
+        }
+        for (auto const & child_name : unique_children)
+        {
+            tag_record.children_counts[child_name] += 1;
         }
 
         nodes.pop();
