@@ -127,7 +127,7 @@ Specifying different non-negative indentation value will cause indentation to be
 options are provided in the source code. Basically, they control behaviour with respect to the top node which is produced by boost's
 XML parser. As such, root node has no name. In the code it is given
 an arbitrary name, which can be changed with `root-name`. This matters
-if non-default `no-skip-root` option is chosen. If `skip-root` is selected then name of the root node does not matter. But id the
+if non-default `no-skip-root` option is chosen. If `skip-root` is selected then name of the root node does not matter. But if the
 user selects `no-skip-root` then the root node will output into one
 of the resulting files.
 One thing to note: if you select custom name for the root node make
@@ -139,3 +139,11 @@ XML file.
 I have not made any extra effort as to optimize memory usage.
 With the provided example XML file peak resident memory value
 indicated by `time -v` shows that `main` ran for 12 seconds and consumed 6.5 GB of RAM.
+
+## Code comments
+There are three kind of them:
+
+* in-code comments, present where needed, as to for instance explain things that might not be immediately obvious,
+* public function interface comments, they are present in header files, because these are the files the public interface user looks at. They are not duplicted in translation units.
+* non-public function interface comments, these are present in
+translation units directly above functions they pertain to. They are intended for the developers.
