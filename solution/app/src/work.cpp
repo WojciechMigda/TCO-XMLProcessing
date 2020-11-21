@@ -16,7 +16,11 @@ int work(
     cli_params_t const & cli_params)
 {
     int rv = parse_xml_file(ifile, cli_params)
-        .rightFlatMap(jsonize)
+        .rightFlatMap(
+            [&cli_params](tags_tree_t && tags)
+            {
+                return jsonize(std::move(tags), cli_params);
+            })
         .rightFlatMap(
             [&odir, &cli_params](auto && fnames_with_contents)
             {

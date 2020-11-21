@@ -8,7 +8,7 @@
 #include <string>
 
 
-using cli_param_value_t = std::variant<std::string, bool>;
+using cli_param_value_t = std::variant<int, std::string, bool>;
 
 using cli_params_t = std::unordered_map<std::string, cli_param_value_t>;
 
@@ -25,6 +25,12 @@ static inline std::string root_name(cli_params_t const & params)
 static inline bool skip_root(cli_params_t const & params)
 {
     return std::get<bool>(params.at("skip_root"));
+}
+
+
+static inline int json_indent(cli_params_t const & params)
+{
+    return std::get<int>(params.at("json_indent"));
 }
 
 
