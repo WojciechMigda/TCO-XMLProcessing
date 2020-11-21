@@ -23,8 +23,6 @@ include_directories(
 include_directories(
   "$<TARGET_PROPERTY:fmt,MY_INCLUDE_DIRS>" )
 include_directories(
-  "$<TARGET_PROPERTY:dbg,MY_INCLUDE_DIRS>" )
-include_directories(
   "$<TARGET_PROPERTY:spdlog,MY_INCLUDE_DIRS>" )
 
 target_link_libraries( ${APP} ${Tsetlini_LIBRARY} stdc++fs )
