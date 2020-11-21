@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <queue>
+#include <unordered_set>
 
 
 using namespace neither;
@@ -26,7 +27,7 @@ tags_tree_t collect_tag_stats(ptree && pt, cli_params_t const & cli_params)
     // BFS
     while (not nodes.empty())
     {
-        std::set<std::string> unique_children;
+        std::unordered_set<std::string> unique_children;
 
         auto & [name, subtree] = nodes.front();
 
@@ -41,7 +42,7 @@ tags_tree_t collect_tag_stats(ptree && pt, cli_params_t const & cli_params)
         {
             if (child_name == "<xmlattr>")
             {
-                std::set<std::string> unique_atts;
+                std::unordered_set<std::string> unique_atts;
 
                 // update known attributes and their counts
 

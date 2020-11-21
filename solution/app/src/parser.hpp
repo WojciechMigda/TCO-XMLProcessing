@@ -8,10 +8,10 @@
 
 #include <fstream>
 #include <map>
-#include <set>
+#include <unordered_map>
 
 
-using element_counts_t = std::map<std::string, unsigned int>;
+using element_counts_t = std::unordered_map<std::string, unsigned int>;
 
 typedef struct
 {
@@ -20,7 +20,7 @@ typedef struct
     element_counts_t children_counts;
 } tag_record_t;
 
-using tags_tree_t = std::map<std::string, tag_record_t>;
+using tags_tree_t = std::unordered_map<std::string, tag_record_t>;
 
 
 [[nodiscard]]
