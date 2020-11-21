@@ -14,6 +14,8 @@ typedef struct
     std::string contents;
 } filename_w_contents_t;
 
+
+[[nodiscard]]
 neither::Either<std::string, std::vector<filename_w_contents_t>> jsonize(tags_tree_t && tags);
 
 
