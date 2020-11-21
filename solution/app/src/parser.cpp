@@ -49,8 +49,8 @@ tags_tree_t collect_tag_stats(ptree && pt)
                 continue;
             }
 
-            // update known children set
-            tag_record.children.insert(child_name);
+            // update known children and their counts
+            ++tag_record.children_counts[child_name];
 
             nodes.emplace(child_name, child_subtree);
         }

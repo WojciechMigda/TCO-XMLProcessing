@@ -10,13 +10,13 @@
 #include <set>
 
 
-using attribute_counts_t = std::map<std::string, unsigned int>;
+using element_counts_t = std::map<std::string, unsigned int>;
 
 typedef struct
 {
     unsigned int count;
-    attribute_counts_t attribute_counts;
-    std::set<std::string> children;
+    element_counts_t attribute_counts;
+    element_counts_t children_counts;
 } tag_record_t;
 
 using tags_tree_t = std::map<std::string, tag_record_t>;
