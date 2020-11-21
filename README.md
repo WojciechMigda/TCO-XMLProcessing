@@ -136,6 +136,7 @@ XML file.
 
 # Various comments
 
+## Resources consumption
 I have not made any extra effort as to optimize memory usage.
 With the provided example XML file peak resident memory value
 indicated by `time -v` shows that `main` ran for 12 seconds and consumed 6.5 GB of RAM.
