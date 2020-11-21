@@ -25,15 +25,32 @@ tags_tree_t collect_tag_stats(ptree && pt)
     while (not nodes.empty())
     {
         auto & [name, subtree] = nodes.front();
-        fmt::print("{} - children size: {}\n", name, subtree.size());
+
+        auto & tag_record = tags[name];
+
+        // bump counter for the current tag
+        ++tag_record.count;
+
+        fmt::print("{} [{}] - children size: {}\n", name, tag_record.count, subtree.size());
 
         for (auto & [child_name, child_subtree] : subtree)
         {
             if (child_name == "<xmlattr>")
             {
+                // update known attributes and their counts
+                for (auto & kv : child_subtree)
+                {
+                    auto & att_name = kv.first;
+                    auto & att_count = tag_record.attribute_counts[att_name];
+                    ++att_count;
+                }
+
                 fmt::print("    node {} has {} attrs\n", name, child_subtree.size());
                 continue;
             }
+
+            // update known children set
+            tag_record.children.insert(child_name);
 
             nodes.emplace(child_name, child_subtree);
         }

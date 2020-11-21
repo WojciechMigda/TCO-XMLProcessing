@@ -7,11 +7,19 @@
 
 #include <fstream>
 #include <map>
+#include <set>
 
 
 using attribute_counts_t = std::map<std::string, unsigned int>;
-using tag_count_with_attributes_t = std::pair<unsigned int, attribute_counts_t>;
-using tags_tree_t = std::map<std::string, tag_count_with_attributes_t>;
+
+typedef struct
+{
+    unsigned int count;
+    attribute_counts_t attribute_counts;
+    std::set<std::string> children;
+} tag_record_t;
+
+using tags_tree_t = std::map<std::string, tag_record_t>;
 
 
 [[nodiscard]]
