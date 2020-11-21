@@ -17,14 +17,17 @@ namespace fs = std::experimental::filesystem;
 using namespace neither;
 
 
-Either<std::string, int> save_to_files(std::vector<filename_w_contents_t> && to_save, std::string const & odir)
+Either<std::string, int>
+save_to_files(
+    std::vector<tagname_w_contents_t> && to_save,
+    std::string const & odir)
 {
     using rv_type = Either<std::string, int>;
 
     for (auto const & fwc : to_save)
     {
         fs::path path(odir);
-        path /= fwc.fname + ".json";
+        path /= fwc.name + ".json";
 
         std::ofstream ofile(path.string());
 

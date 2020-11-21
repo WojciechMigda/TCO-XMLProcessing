@@ -2,6 +2,7 @@
 #include "jsonize.hpp"
 #include "parser.hpp"
 
+#include "spdlog/spdlog.h"
 #include "json/json.hpp"
 #include "neither/either.hpp"
 
@@ -12,11 +13,14 @@ using namespace neither;
 
 
 /*
- * Example contents:
- * {"attributes": [{"name": "a", "required": true}], "children": [{"name": "C", "required": true}]}
+ * Convenience transformer which for a key/value pair of [tag name, tag data]
+ * produces another key/value pair [tag name, file contents].
+ * File contents is a JSON-conforming string.
  *
+ * Example of output file contents:
+ * {"attributes": [{"name": "a", "required": true}], "children": [{"name": "C", "required": true}]}
  */
-filename_w_contents_t
+tagname_w_contents_t
 xform_record(
     std::pair<std::string, tag_record_t> const & kv,
     int const json_indent)
@@ -31,12 +35,24 @@ xform_record(
     auto const & children_counts = tag_record.children_counts;
     auto const & attribute_counts = tag_record.attribute_counts;
 
+    /*
+     * Convenience function which for a given tag converts counts of its unique
+     * occurences into json object, which states whether it was present
+     * in each occurence of parent tag ('required' == true) or not.
+     */
     auto count_to_json = [tag_count](auto const & kv) -> nlohmann::json
     {
         nlohmann::json rv;
 
         rv["name"] = kv.first;
         rv["required"] = (kv.second == tag_count);
+
+        if (kv.second > tag_count)
+        {
+            spdlog::warn(
+                "Tag {} has more unique sub-elements ({})"
+                " than its occurences ({})", kv.first, kv.second, tag_count);
+        }
 
         return rv;
     };
@@ -45,18 +61,18 @@ xform_record(
 
     std::transform(attribute_counts.cbegin(), attribute_counts.cend(), std::back_inserter(j["attributes"]), count_to_json);
 
-    filename_w_contents_t rv = {kv.first, j.dump(json_indent)};
+    tagname_w_contents_t rv = {kv.first, j.dump(json_indent)};
 
     return rv;
 }
 
 
-Either<std::string, std::vector<filename_w_contents_t>>
+Either<std::string, std::vector<tagname_w_contents_t>>
 jsonize(tags_tree_t && tags, cli_params_t const & cli_params)
 {
-    using rv_type = Either<std::string, std::vector<filename_w_contents_t>>;
+    using rv_type = Either<std::string, std::vector<tagname_w_contents_t>>;
 
-    std::vector<filename_w_contents_t> rv;
+    std::vector<tagname_w_contents_t> rv;
     auto const json_indent = params::json_indent(cli_params);
 
     try

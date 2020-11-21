@@ -7,12 +7,19 @@
 #include <iostream>
 #include <string>
 
+
+/*
+ * Convert bool into string representation.
+ */
 static std::string to_string(bool v)
 {
     return v ? "true" : "false";
 }
 
 
+/*
+ * Set `spdlog` log level according to `verbose` and `debug` flags.
+ */
 static void set_log_level(bool verbose, bool debug)
 {
     if (debug)
@@ -32,6 +39,10 @@ static void set_log_level(bool verbose, bool debug)
 
 int main(int argc, char **argv)
 {
+    /*
+     * Define CLI interface, with parameters, their descriptions,
+     * and default values.
+     */
     std::string xml_ifname;
     std::string out_dir;
     std::string root_name("<ROOT>");
@@ -65,12 +76,19 @@ int main(int argc, char **argv)
 
         spdlog::info("Start");
 
+        /*
+         * Re-bundle selected optional parameters into custom CLI params
+         * container.
+         */
         cli_params_t const cli_params{
             {"skip_root", skip_root},
             {"root_name", root_name},
             {"json_indent", json_indent}
         };
 
+        /*
+         * Attempt to do the actual work
+         */
         auto rv = maybe_work(xml_ifname, out_dir, cli_params);
 
         spdlog::info("Done");

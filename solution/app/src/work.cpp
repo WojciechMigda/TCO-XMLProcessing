@@ -10,6 +10,38 @@
 #include <string>
 
 
+/*
+ * Process valid input.
+ *
+ * Read data from the passed input file stream, transform read data, and
+ * save results into specified folder.
+ *
+ * This function and the rest of the code uses Functional Paradigm of error
+ * handling using monadic result type
+ * (https://en.wikipedia.org/wiki/Result_type)
+ * which here is achieved using very smart implementation using `neither`
+ * library.
+ * Each result type holds either error (the left side), here simply an error
+ * string, or successful value (the right side).
+ * Subsequent processing usually involves processing of either error or success
+ * conditions with right- and left-mapping functions.
+ *
+ * Full documentation for `neither`: https://github.com/LoopPerfect/neither
+ *
+ * Applies pipeline consists of the following steps:
+ * - parse XML and produce tag statistics,
+ * - jsonize tags' statistics into data that can be written to files,
+ * - create and write actual files.
+ *
+ * Error condition (here and in other places) is handled by `error_printer`.
+ *
+ * I intentionally minimize use of exceptions, as they do not have the property
+ * of referential transparency, and they make code less readable and difficult
+ * to reason about (see "Out of the Tar Pit" by Moseley and Marks).
+ *
+ * `join` in the `Either` pipeline 'collapses' left- and right-values into
+ * single value, here integer status code.
+ */
 int work(
     std::ifstream & ifile,
     std::string const & odir,
@@ -45,7 +77,7 @@ int maybe_work(
         .rightMap(
             [&odir, &cli_params](std::ifstream && ifile)
             {
-                int rv = check_directory_w(odir)
+                int rv = check_directory(odir)
                     .leftMap(error_printer)
                     .rightMap(
                         [&ifile, &cli_params](std::string const & odir)

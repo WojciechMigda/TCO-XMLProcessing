@@ -11,13 +11,19 @@
 
 typedef struct
 {
-    std::string fname;
+    std::string name;
     std::string contents;
-} filename_w_contents_t;
+} tagname_w_contents_t;
 
 
+/*
+ * `jsonize` takes tags' data produces by the parser and transforms it into
+ * either error message (as string) or vector
+ * of pairs [tag name, file contents].
+ * Passed `cli_params` control indentation of produced JSON contents.
+ */
 [[nodiscard]]
-neither::Either<std::string, std::vector<filename_w_contents_t>>
+neither::Either<std::string, std::vector<tagname_w_contents_t>>
 jsonize(tags_tree_t && tags, cli_params_t const & cli_params);
 
 
