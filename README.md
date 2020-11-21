@@ -28,8 +28,8 @@ also on Windows, using either clang, MinGW, or Visual Studio.
 Care, though, should be taken as to the version of the compiler
 as this program makes use of C++17 and `std::filesystem` features.
 
-Specifically, I have used g++ 7.5.0.
-Also, there is a dependency to `boost.property_tree`. Version used by me is 1.68.
+Specifically, I have used `g++` `7.5.0` and `cmake` `3.10.2`.
+Also, there is a dependency to `boost.property_tree`. Version used by me is `1.68`.
 Other dependencied are already included in the source code bundle.
 They include:
 
