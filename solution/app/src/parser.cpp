@@ -3,6 +3,7 @@
 
 #include "neither/either.hpp"
 #include "fmt/format.h"
+#include "spdlog/spdlog.h"
 
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -34,7 +35,7 @@ tags_tree_t collect_tag_stats(ptree && pt, cli_params_t const & cli_params)
         // bump counter for the current tag
         ++tag_record.count;
 
-//        fmt::print("{} [{}] - children size: {}\n", name, tag_record.count, subtree.size());
+        spdlog::debug("{} [{}] - children size: {}", name, tag_record.count, subtree.size());
 
         for (auto & [child_name, child_subtree] : subtree)
         {
@@ -53,7 +54,7 @@ tags_tree_t collect_tag_stats(ptree && pt, cli_params_t const & cli_params)
                     tag_record.attribute_counts[att_name] += 1;
                 }
 
-//                fmt::print("    node {} has {} attrs\n", name, child_subtree.size());
+                spdlog::debug("    node {} has {} attrs", name, child_subtree.size());
                 continue;
             }
 

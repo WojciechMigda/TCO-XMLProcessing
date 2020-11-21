@@ -15,13 +15,13 @@ static std::string to_string(bool v)
 
 static void set_log_level(bool verbose, bool debug)
 {
-    if (verbose)
-    {
-        spdlog::set_level(spdlog::level::info);
-    }
-    else if (debug)
+    if (debug)
     {
         spdlog::set_level(spdlog::level::debug);
+    }
+    else if (verbose)
+    {
+        spdlog::set_level(spdlog::level::info);
     }
     else
     {
