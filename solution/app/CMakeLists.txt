@@ -25,6 +25,10 @@ include_directories(
 include_directories(
   "$<TARGET_PROPERTY:spdlog,MY_INCLUDE_DIRS>" )
 
-target_link_libraries( ${APP} ${Tsetlini_LIBRARY} stdc++fs )
+find_package( Boost 1.41.0 REQUIRED )
+target_include_directories( ${APP} PUBLIC ${Boost_INCLUDE_DIRS})
+
+find_package( Filesystem REQUIRED COMPONENTS Experimental )
+target_link_libraries( ${APP} ${Tsetlini_LIBRARY} std::filesystem )
 
 target_compile_definitions( ${APP} PRIVATE "$<TARGET_PROPERTY:fmt,INTERFACE_COMPILE_DEFINITIONS>" )

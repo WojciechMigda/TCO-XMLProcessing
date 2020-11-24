@@ -54,7 +54,7 @@ int work(
                 return jsonize(std::move(tags), cli_params);
             })
         .rightFlatMap(
-            [&odir, &cli_params](auto && fnames_with_contents)
+            [&odir](auto && fnames_with_contents)
             {
                 return save_to_files(std::move(fnames_with_contents), odir);
             }
