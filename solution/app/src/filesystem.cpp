@@ -3,6 +3,7 @@
 
 #include <string>
 #include <fstream>
+#include <system_error>
 
 #if defined __cpp_lib_filesystem
 #include <filesystem>
@@ -39,12 +40,21 @@ Either<std::string, std::string> check_directory(std::string const & odir)
     auto const path = fs::path(odir);
     std::error_code ec;
 
-    if (not fs::is_directory(path, ec))
+    if (fs::exists(path, ec))
     {
-        return rv_type::leftOf(fmt::format("{}: {}", odir, ec.message()));
+        if (not fs::is_directory(path, ec))
+        {
+            // interestingly, ec is set to Success
+            return rv_type::leftOf(fmt::format("{}: Not a directory", odir));
+        }
     }
     else
     {
-        return rv_type::rightOf(odir);
+        if (not fs::create_directories(path, ec))
+        {
+            return rv_type::leftOf(fmt::format("Failed to create {}: {}", odir, ec.message()));
+        }
     }
+
+    return rv_type::rightOf(odir);
 }

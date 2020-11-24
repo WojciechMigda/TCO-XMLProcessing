@@ -9,6 +9,7 @@
 #include <fstream>
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
 
 
 /*
@@ -45,7 +46,10 @@ using tags_tree_t = std::unordered_map<std::string, tag_record_t>;
  */
 [[nodiscard]]
 neither::Either<std::string, tags_tree_t>
-parse_xml_file(std::ifstream & ifile, cli_params_t const & cli_params);
+parse_xml_file(
+    std::ifstream & ifile,
+    std::unordered_set<std::string> const & to_ignore,
+    cli_params_t const & cli_params);
 
 
 #endif /* APP_SRC_PARSER_HPP_ */

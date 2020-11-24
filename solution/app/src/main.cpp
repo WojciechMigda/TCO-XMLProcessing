@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <unordered_set>
 
 
 /*
@@ -50,10 +52,12 @@ int main(int argc, char **argv)
     bool verbose = false;
     bool debug = false;
     int json_indent = -1;
+    std::vector<std::string> to_ignore;
 
     auto cli = (
         clipp::required("--input", "-i").doc("Input XML file") & clipp::value("XML data file to read from", xml_ifname),
         clipp::required("--output-dir", "-o").doc("Destination folder where output files are to be created") & clipp::value("Destination folder", out_dir),
+        clipp::option("--ignore-tags", "-x").doc("Specify tags to ignore") & clipp::values("List of tags to ignore", to_ignore),
         clipp::option("--root-name").doc("Name for the root node to use, if enabled") & clipp::value("Name for the root node=" + root_name, root_name),
         (
             clipp::option("--skip-root").set(skip_root, true) |
@@ -86,10 +90,12 @@ int main(int argc, char **argv)
             {"json_indent", json_indent}
         };
 
+        std::unordered_set<std::string> const to_ignore_unique(to_ignore.cbegin(), to_ignore.cend());
+
         /*
          * Attempt to do the actual work
          */
-        auto rv = maybe_work(xml_ifname, out_dir, cli_params);
+        auto rv = maybe_work(xml_ifname, out_dir, to_ignore_unique, cli_params);
 
         spdlog::info("Done");
 

@@ -6,6 +6,7 @@
 #include "cli_params.hpp"
 
 #include <string>
+#include <unordered_set>
 
 
 /*
@@ -19,6 +20,7 @@
 int maybe_work(
     std::string const & ifname,
     std::string const & odir,
+    std::unordered_set<std::string> const & to_ignore,
     cli_params_t const & cli_params);
 
 

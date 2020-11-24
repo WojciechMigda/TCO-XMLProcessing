@@ -8,6 +8,7 @@
 #include "spdlog/spdlog.h"
 
 #include <string>
+#include <unordered_set>
 
 
 /*
@@ -45,9 +46,10 @@
 int work(
     std::ifstream & ifile,
     std::string const & odir,
+    std::unordered_set<std::string> const & to_ignore,
     cli_params_t const & cli_params)
 {
-    int rv = parse_xml_file(ifile, cli_params)
+    int rv = parse_xml_file(ifile, to_ignore, cli_params)
         .rightFlatMap(
             [&cli_params](tags_tree_t && tags)
             {
@@ -70,21 +72,22 @@ int work(
 int maybe_work(
     std::string const & ifname,
     std::string const & odir,
+    std::unordered_set<std::string> const & to_ignore,
     cli_params_t const & cli_params)
 {
     int rv = open_file_r(ifname)
         .leftMap(error_printer)
         .rightMap(
-            [&odir, &cli_params](std::ifstream && ifile)
+            [&odir, &to_ignore, &cli_params](std::ifstream && ifile)
             {
                 int rv = check_directory(odir)
                     .leftMap(error_printer)
                     .rightMap(
-                        [&ifile, &cli_params](std::string const & odir)
+                        [&ifile, &to_ignore, &cli_params](std::string const & odir)
                         {
-                            work(ifile, odir, cli_params);
+                            int const rv = work(ifile, odir, to_ignore, cli_params);
 
-                            return 0;
+                            return rv;
                         }
                     ).join();
 

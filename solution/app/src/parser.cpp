@@ -43,7 +43,10 @@ using boost::property_tree::ptree;
  * node will or will not be included in final result, and what the custom name
  * shall be. By default this root node is skipped.
  */
-tags_tree_t collect_tag_stats(ptree && pt, cli_params_t const & cli_params)
+tags_tree_t collect_tag_stats(
+    ptree && pt,
+    std::unordered_set<std::string> const & to_ignore,
+    cli_params_t const & cli_params)
 {
     tags_tree_t tags;
     std::queue<std::pair<std::string, ptree>> nodes;
@@ -86,7 +89,10 @@ tags_tree_t collect_tag_stats(ptree && pt, cli_params_t const & cli_params)
             }
 
             // update known children and their counts
-            unique_children.insert(child_name);
+            if (to_ignore.count(child_name) == 0)
+            {
+                unique_children.insert(child_name);
+            }
 
             nodes.emplace(child_name, child_subtree);
         }
@@ -103,12 +109,21 @@ tags_tree_t collect_tag_stats(ptree && pt, cli_params_t const & cli_params)
         tags.erase(params::root_name(cli_params));
     }
 
+    // drop tags to ignore
+    for (auto const & tag : to_ignore)
+    {
+        tags.erase(tag);
+    }
+
     return tags;
 }
 
 
 Either<std::string, tags_tree_t>
-parse_xml_file(std::ifstream & ifile, cli_params_t const & cli_params)
+parse_xml_file(
+    std::ifstream & ifile,
+    std::unordered_set<std::string> const & to_ignore,
+    cli_params_t const & cli_params)
 {
     using rv_type = Either<std::string, tags_tree_t>;
 
@@ -119,10 +134,10 @@ parse_xml_file(std::ifstream & ifile, cli_params_t const & cli_params)
         // call boost's XML parser
         read_xml(ifile, pt);
     }
-    catch(boost::property_tree::xml_parser::xml_parser_error & ex)
+    catch (boost::property_tree::xml_parser::xml_parser_error & ex)
     {
         return rv_type::leftOf(fmt::format("Bad XML: {}", ex.what()));
     }
 
-    return rv_type::rightOf(collect_tag_stats(std::move(pt), cli_params));
+    return rv_type::rightOf(collect_tag_stats(std::move(pt), to_ignore, cli_params));
 }
